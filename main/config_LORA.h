@@ -1,5 +1,5 @@
 /*  
-  Theengs OpenMQTTGateway - We Unite Sensors in One Open-Source Interface
+  OpenMQTTGateway  - ESP8266 or Arduino program for home automation 
 
    Act as a gateway between your 433mhz, infrared IR, BLE, LoRa signal and one interface like an MQTT broker 
    Send and receiving command by MQTT
@@ -38,7 +38,7 @@ extern void MQTTtoLORA(char* topicOri, JsonObject& RFdata);
 
 //Default parameters used when the parameters are not set in the json data
 #ifndef LORA_BAND
-#  define LORA_BAND 868E6
+#  define LORA_BAND 915E6
 #endif
 #ifndef LORA_SIGNAL_BANDWIDTH
 #  define LORA_SIGNAL_BANDWIDTH 125E3
@@ -75,7 +75,7 @@ extern void MQTTtoLORA(char* topicOri, JsonObject& RFdata);
 //TTGO LORA BOARD ESP32 PIN DEFINITION
 
 #ifndef LORA_SCK
-#  define LORA_SCK 5 // GPIO5  -- SX1278's SCK
+#  define LORA_SCK 18 // GPIO5  -- SX1278's SCK
 #endif
 
 #ifndef LORA_MISO
@@ -83,19 +83,19 @@ extern void MQTTtoLORA(char* topicOri, JsonObject& RFdata);
 #endif
 
 #ifndef LORA_MOSI
-#  define LORA_MOSI 27 // GPIO27 -- SX1278's MOSI
+#  define LORA_MOSI 23 // GPIO27 -- SX1278's MOSI
 #endif
 
 #ifndef LORA_SS
-#  define LORA_SS 18 // GPIO18 -- SX1278's CS
+#  define LORA_SS 14 // GPIO18 -- SX1278's CS
 #endif
 
 #ifndef LORA_RST
-#  define LORA_RST 14 // GPIO14 -- SX1278's RESET
+#  define LORA_RST 33 // GPIO14 -- SX1278's RESET
 #endif
 
 #ifndef LORA_DI0
-#  define LORA_DI0 26 // GPIO26 -- SX1278's IRQ(Interrupt Request)
+#  define LORA_DI0 32 // GPIO26 -- SX1278's IRQ(Interrupt Request)
 #endif
 
 struct LORAConfig_s {
