@@ -1,5 +1,5 @@
 /*
-  Theengs OpenMQTTGateway - We Unite Sensors in One Open-Source Interface
+  OpenMQTTGateway  - ESP8266 or Arduino program for home automation
 
    This files enables you to set your parameters for the PWM actuator
 

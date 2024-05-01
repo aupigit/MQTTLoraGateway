@@ -1,7 +1,7 @@
 /*
   OpenMQTTGateway  - ESP8266 or Arduino program for home automation
 
-   Act as a gateway between your 433mhz, infrared IR, BLE, LoRa signal and one interface like an MQTT broker
+   Act as a wifi or ethernet gateway between your 433mhz/infrared IR signal  and a MQTT broker
    Send and receiving command by MQTT
 
    This files enables to set your parameter for the Home assistant mqtt Discovery
@@ -127,10 +127,6 @@ void announceDeviceTrigger(bool use_gateway_info,
 
 #ifndef GATEWAY_MANUFACTURER
 #  define GATEWAY_MANUFACTURER "OMG_community"
-#endif
-
-#ifndef ForceDeviceName
-#  define ForceDeviceName false // Set to true to force the device name to be from the name of the device and not the model
 #endif
 
 /*-------------- Auto discovery macros-----------------*/

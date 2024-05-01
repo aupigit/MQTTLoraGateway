@@ -1,7 +1,7 @@
 /*  
-  Theengs OpenMQTTGateway - We Unite Sensors in One Open-Source Interface
+  OpenMQTTGateway  - ESP8266 or Arduino program for home automation 
 
-   Act as a gateway between your 433mhz, infrared IR, BLE, LoRa signal and one interface like an MQTT broker 
+   Act as a wifi or ethernet gateway between your 433mhz/infrared IR signal  and a MQTT broker 
    Send and receiving command by MQTT
  
   This gateway enables to set your parameters for the 2G gateway

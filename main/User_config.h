@@ -1,7 +1,7 @@
 /*
   OpenMQTTGateway  - ESP8266 or Arduino program for home automation
 
-   Act as a gateway between your 433mhz, infrared IR, BLE, LoRa signal and one interface like an MQTT broker
+   Act as a wifi or ethernet gateway between your 433mhz/infrared IR signal  and a MQTT broker
    Send and receiving command by MQTT
 
   This program enables to:
@@ -29,7 +29,7 @@
 #define user_config_h
 /*-------------------VERSION----------------------*/
 #ifndef OMG_VERSION
-#  define OMG_VERSION "version_tag"
+#  define OMG_VERSION "1.6.6"
 #endif
 
 /*-------------CONFIGURE WIFIMANAGER-------------(only ESP8266 & SONOFF RFBridge)*/
@@ -52,16 +52,17 @@
 
 // Uncomment to use the MAC address first 4 digits in the format of 5566 as the suffix of the short gateway name.
 // Any definition of Gateway_Name will be ignored. The Gateway_Short_name _ MAC will be used as the access point name.
-//#define USE_MAC_AS_GATEWAY_NAME
+//
+#define USE_MAC_AS_GATEWAY_NAME
 #ifndef Gateway_Name
-#  define Gateway_Name "OpenMQTTGateway"
+#  define Gateway_Name "MQTTGateway"
 #endif
 #ifndef Gateway_Short_Name
-#  define Gateway_Short_Name "OMG"
+#  define Gateway_Short_Name "GW-dashfer"
 #endif
 
 #ifndef Base_Topic
-#  define Base_Topic "home/"
+#  define Base_Topic "gateway/"
 #endif
 
 /*-------------DEFINE YOUR NETWORK PARAMETERS BELOW----------------*/
@@ -83,7 +84,7 @@
 #endif
 
 #if defined(ESP8266) || defined(ESP32) // for nodemcu, weemos and esp8266
-//#  define ESPWifiManualSetup true //uncomment you don't want to use wifimanager for your credential settings on ESP
+#  define ESPWifiManualSetup true //uncomment you don't want to use wifimanager for your credential settings on ESP
 #else // for arduino boards
 const byte ip[] = {192, 168, 1, 99};
 const byte mac[] = {0xDE, 0xED, 0xBA, 0xFE, 0x54, 0x95}; //W5100 ethernet shield MAC address
@@ -113,10 +114,10 @@ const byte mac[] = {0xDE, 0xED, 0xBA, 0xFE, 0x54, 0x95}; //W5100 ethernet shield
 
 #if defined(ESPWifiManualSetup) // for nodemcu, weemos and esp8266
 #  ifndef wifi_ssid
-#    define wifi_ssid "wifi ssid"
+#    define wifi_ssid "Aupi"
 #  endif
 #  ifndef wifi_password
-#    define wifi_password "wifi password"
+#    define wifi_password "Aupinista@123"
 #  endif
 #endif
 
@@ -125,54 +126,62 @@ const byte mac[] = {0xDE, 0xED, 0xBA, 0xFE, 0x54, 0x95}; //W5100 ethernet shield
 #  define WifiManager_ssid Gateway_Name //this is the network name of the initial setup access point
 #endif
 #ifndef WifiManager_ConfigPortalTimeOut
-#  define WifiManager_ConfigPortalTimeOut 240 //time in seconds for the setup portal to stay open, default 240s
+#  define WifiManager_ConfigPortalTimeOut 2400 //time in seconds for the setup portal to stay open, default 240s
 #endif
 #ifndef WiFi_TimeOut
 #  define WiFi_TimeOut 30
 #endif
 #ifndef WM_DEBUG // WiFi Manager debug
-#  define WM_DEBUG 1
+#  define WM_DEBUG 4
 #endif
 //#define WIFIMNG_HIDE_MQTT_CONFIG //Uncomment so as to hide MQTT setting from Wifi manager page
 
 /*-------------DEFINE YOUR ADVANCED NETWORK PARAMETERS BELOW----------------*/
 //#define MDNS_SD //uncomment if you  want to use mDNS for discovering automatically your IP server, please note that mDNS with ESP32 can cause the BLE to not work
-#define maxConnectionRetryNetwork 5 //maximum Wifi connection attempts with existing credential at start (used to bypass ESP32 issue on wifi connect)
-#define maxRetryWatchDog          11 //maximum Wifi or MQTT re-connection attempts before restarting
+#define maxConnectionRetryNetwork 3 //maximum Wifi connection attempts with existing credential at start (used to bypass ESP32 issue on wifi connect)
+#define maxRetryWatchDog          10 //maximum Wifi or MQTT re-connection attempts before restarting
 
 //set minimum quality of signal so it ignores AP's under that quality
 #define MinimumWifiSignalQuality 8
 
 /*-------------DEFINE YOUR MQTT PARAMETERS BELOW----------------*/
 //MQTT Parameters definition
-#define parameters_size     65
-#define mqtt_topic_max_size 150
-#ifndef mqtt_max_packet_size
-#  ifdef MQTT_HTTPS_FW_UPDATE
-#    ifndef CHECK_OTA_UPDATE
-#      define CHECK_OTA_UPDATE true // enable to check for the presence of a new version for your environment on Github
+#if defined(ESP8266) || defined(ESP32) || defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__)
+#  define parameters_size     65
+#  define mqtt_topic_max_size 150
+#  ifndef mqtt_max_packet_size
+#    ifdef MQTT_HTTPS_FW_UPDATE
+#      ifndef CHECK_OTA_UPDATE
+#        define CHECK_OTA_UPDATE true // enable to check for the presence of a new version for your environment on Github
+#      endif
+#      define mqtt_max_packet_size 2560
+#    else
+#      define mqtt_max_packet_size 1024
 #    endif
-#    define mqtt_max_packet_size 2560
-#  else
-#    define mqtt_max_packet_size 1024
 #  endif
+#else
+#  define parameters_size      30
+#  define mqtt_topic_max_size  75
+#  define mqtt_max_packet_size 128
 #endif
 
+
+
 #ifndef MQTT_USER
-#  define MQTT_USER "your_username"
+#  define MQTT_USER "admin"
 #endif
 #ifndef MQTT_PASS
-#  define MQTT_PASS "your_password"
+#  define MQTT_PASS "admin"
 #endif
 #ifndef MQTT_SERVER
-#  define MQTT_SERVER "192.168.1.17"
+#  define MQTT_SERVER "172.16.1.124"
 #endif
 #ifndef MQTT_PORT
 #  define MQTT_PORT "1883"
 #endif
 
 #ifndef GeneralTimeOut
-#  define GeneralTimeOut 20 // time out if a task is stuck in seconds (should be more than TimeBetweenReadingRN8209/1000) and more than 3 seconds, the WDT will reset the ESP, used also for MQTT connection
+#  define GeneralTimeOut 5 // time out if a task is stuck in seconds (should be more than TimeBetweenReadingRN8209/1000) and more than 3 seconds, the WDT will reset the ESP, used also for MQTT connection
 #endif
 #ifndef QueueSemaphoreTimeOutTask
 #  define QueueSemaphoreTimeOutTask 3000 // time out for semaphore retrieval from a task
@@ -198,7 +207,7 @@ const char* certificate PROGMEM = R"EOF("
 #  define ATTEMPTS_BEFORE_B  20 // Number of wifi connection attempts before going to B protocol
 
 #  ifndef NTP_SERVER
-#    define NTP_SERVER "pool.ntp.org"
+#    define NTP_SERVER "a.ntp.br"
 #  endif
 
 #  ifndef MQTT_SECURE_DEFAULT
@@ -316,7 +325,7 @@ int lowpowermode = DEFAULT_LOW_POWER_MODE;
 
 //#define ZgatewayRF     "RF"       //ESP8266, Arduino, ESP32
 //#define ZgatewayIR     "IR"       //ESP8266, Arduino,         Sonoff RF Bridge
-//#define ZgatewayLORA   "LORA"       //ESP8266, Arduino, ESP32
+#define ZgatewayLORA   "LORA"       //ESP8266, Arduino, ESP32
 //#define ZgatewayPilight "Pilight" //ESP8266, Arduino, ESP32
 //#define ZgatewayWeatherStation "WeatherStation" //ESP8266, Arduino, ESP32
 //#define ZgatewayGFSunInverter "GFSunInverter"   //ESP32
@@ -391,10 +400,10 @@ int lowpowermode = DEFAULT_LOW_POWER_MODE;
 #  define simpleReceiving true //define false if you don't want to use old way reception analysis
 #endif
 #ifndef message_UTCtimestamp
-#  define message_UTCtimestamp false //define true if you want messages to be timestamped in ISO8601 UTC format (e.g.: "UTCtime"="2023-12-26T19:10:20Z")
+#  define message_UTCtimestamp true //define true if you want messages to be timestamped in ISO8601 UTC format (e.g.: "UTCtime"="2023-12-26T19:10:20Z")
 #endif
 #ifndef message_unixtimestamp
-#  define message_unixtimestamp false //define true if you want messages to have an unix timestamp (e.g.: "unixtime"=1679015107)
+#  define message_unixtimestamp true //define true if you want messages to have an unix timestamp (e.g.: "unixtime"=1679015107)
 #endif
 
 /*-------------DEFINE YOUR OTA PARAMETERS BELOW----------------*/
@@ -402,7 +411,7 @@ int lowpowermode = DEFAULT_LOW_POWER_MODE;
 #  define ota_hostname Gateway_Name
 #endif
 #ifndef gw_password
-#  define gw_password ""
+#  define gw_password "admin"
 #endif
 #ifndef ota_port
 #  define ota_port 8266
@@ -423,6 +432,10 @@ int lowpowermode = DEFAULT_LOW_POWER_MODE;
 //#      define LED_SEND_RECEIVE 40
 #    elif ESP32
 //#      define LED_SEND_RECEIVE 40
+#    elif __AVR_ATmega2560__ //arduino mega
+//#      define LED_SEND_RECEIVE 40
+#    else //arduino uno/nano
+//#      define LED_SEND_RECEIVE 40
 #    endif
 #  endif
 #  ifndef LED_SEND_RECEIVE_ON
@@ -433,6 +446,10 @@ int lowpowermode = DEFAULT_LOW_POWER_MODE;
 //#      define LED_ERROR 42
 #    elif ESP32
 //#      define LED_ERROR 42
+#    elif __AVR_ATmega2560__ //arduino mega
+//#      define LED_ERROR 42
+#    else //arduino uno/nano
+//#      define LED_ERROR 42
 #    endif
 #  endif
 #  ifndef LED_ERROR_ON
@@ -442,6 +459,10 @@ int lowpowermode = DEFAULT_LOW_POWER_MODE;
 #    ifdef ESP8266
 //#      define LED_INFO 44
 #    elif ESP32
+//#      define LED_INFO 44
+#    elif __AVR_ATmega2560__ //arduino mega
+//#      define LED_INFO 44
+#    else //arduino uno/nano
 //#      define LED_INFO 44
 #    endif
 #  endif
@@ -623,8 +644,8 @@ Adafruit_NeoPixel leds2(ANEOPIX_IND_NUM_LEDS, ANEOPIX_IND_DATA_GPIO2, ANEOPIX_IN
 #ifdef ESP8266
 //#  define TRIGGER_GPIO 14 // pin D5 as full reset button (long press >10s)
 #elif ESP32
-//#  define TRIGGER_GPIO 0 // boot button as full reset button (long press >10s)
-//#  define NO_INT_TEMP_READING true //Define if we don't want internal temperature reading for the ESP32
+#  define TRIGGER_GPIO 25 // boot button as full reset button (long press >10s)
+// #  define NO_INT_TEMP_READING true //Define if we don't want internal temperature reading for the ESP32
 #endif
 
 //      VCC   ------------D|-----------/\/\/\/\ -----------------  Arduino PIN
@@ -663,6 +684,14 @@ Adafruit_NeoPixel leds2(ANEOPIX_IND_NUM_LEDS, ANEOPIX_IND_DATA_GPIO2, ANEOPIX_IN
 #  define JSON_MSG_BUFFER    512 // Json message max buffer size, don't put 768 or higher it is causing unexpected behaviour on ESP8266
 #  define SIGNAL_SIZE_UL_ULL uint64_t
 #  define STRTO_UL_ULL       strtoull
+#elif defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__)
+#  define JSON_MSG_BUFFER    512 // Json message max buffer size, don't put 1024 or higher
+#  define SIGNAL_SIZE_UL_ULL uint64_t
+#  define STRTO_UL_ULL       strtoul
+#else // boards with smaller memory
+#  define JSON_MSG_BUFFER    64 // Json message max buffer size, don't put 1024 or higher
+#  define SIGNAL_SIZE_UL_ULL uint32_t
+#  define STRTO_UL_ULL       strtoul
 #endif
 
 #if defined(ZgatewayRF) || defined(ZgatewayIR) || defined(ZgatewaySRFB) || defined(ZgatewayWeatherStation) || defined(ZgatewayRTL_433)
@@ -722,9 +751,9 @@ void saveConfig();
 unsigned long uptime();
 bool cmpToMainTopic(const char*, const char*);
 void pub(const char*, const char*, bool);
-// void pub(const char*, JsonObject&);
+//void pub(const char*, JsonObject&);
 void pub(const char*, const char*);
-// void pub_custom_topic(const char*, JsonObject&, boolean);
+//void pub_custom_topic(const char*, JsonObject&, boolean);
 
 #if defined(ESP32)
 #  include <Preferences.h>
@@ -750,6 +779,7 @@ unsigned long lastDiscovery = 0; // Time of the last discovery to trigger automa
 /*--------------------Minimum freeHeap--------------------*/
 // Below this parameter we trigger a restart, this avoid stuck boards like seen in https://github.com/1technophile/OpenMQTTGateway/issues/1693
 #  define MinimumMemory 40000
+
 
 /*----------------CONFIGURABLE PARAMETERS-----------------*/
 struct SYSConfig_s {

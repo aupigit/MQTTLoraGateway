@@ -1,7 +1,7 @@
 /* 
  OpenMQTTGateway - ESP8266 or Arduino program for home automation 
 
- Act as a gateway between your 433mhz, infrared IR, BLE, LoRa signal and one interface like an MQTT broker  
+ Act as a wifi or ethernet gateway between your 433mhz/infrared IR signal and a MQTT broker 
  Send and receiving command by MQTT
  
  This files enables to set your parameter for the DHT11/22 sensor
@@ -30,33 +30,33 @@
 
 // TODO: Create a script to generate these from WebPack
 
-#define body_footer_main_menu   "<div id=but2d style=\"display: block;\"></div><p><form id=but2 style=\"display: block;\" action='.' method='get'><button>Main Menu</button></form></p>"
-#define body_footer_config_menu "<div id=but3d style=\"display: block;\"></div><p><form id=but3 style=\"display: block;\" action='cn' method='get'><button>Configuration</button></form></p>"
-#define body_header             "<body><div style='text-align:left;display:inline-block;min-width:360px;'><div style='text-align:center;'><noscript> To use, please enable JavaScript <br></noscript><h3>%s</h3><h2>%s</h2></div>"
+#define body_footer_main_menu   "<div id=but2d style=\"display: block;\"></div><p><form id=but2 style=\"display: block;\" action='.' method='get'><button>Menu Principal</button></form></p>"
+#define body_footer_config_menu "<div id=but3d style=\"display: block;\"></div><p><form id=but3 style=\"display: block;\" action='cn' method='get'><button>Configurações</button></form></p>"
+#define body_header             "<body><div style='text-align:left;display:inline-block;min-width:360px;'><div style='text-align:center;'><noscript> Para usar, por favor habilite o JavaScript <br></noscript><h3>%s</h3><h2>%s</h2></div>"
 
 #if defined(ESP32) && defined(MQTT_HTTPS_FW_UPDATE)
-#  define button_upgrade "<p><form id=but5 style='display: block;' action='up' method='get'><button>Firmware Upgrade</button></form></p>"
+#  define button_upgrade "<p><form id=but5 style='display: block;' action='up' method='get'><button>Upgrade de Firmware </button></form></p>"
 #else
 #  define button_upgrade ""
 #endif
 // Configuration Menu
 
-#define configure_1 "<p><form action='wi' method='get'><button>Configure WiFi</button></form></p>"
-#define configure_2 "<p><form action='mq' method='get'><button>Configure MQTT</button></form></p>"
+#define configure_1 "<p><form action='wi' method='get'><button>Configuração da WiFi</button></form></p>"
+#define configure_2 "<p><form action='mq' method='get'><button>Configuração do MQTT</button></form></p>"
 /*#if defined(ZgatewayCloud)
 #  define configure_3 "<p><form action='cl' method='get'><button>Configure Cloud</button></form></p>"
 #else
 #  define configure_3
 #endif*/
 #ifndef ESPWifiManualSetup
-#  define configure_3 "<p><form action='cg' method='get'><button>Configure Gateway</button></form></p>"
+#  define configure_3 "<p><form action='cg' method='get'><button>Configuração do Gateway</button></form></p>"
 #else
 #  define configure_3
 #endif
-#define configure_4 "<p><form action='wu' method='get'><button>Configure WebUI</button></form></p>"
-#define configure_5 "<p><form action='lo' method='get'><button>Configure Logging</button></form></p>"
+#define configure_4 "<p><form action='wu' method='get'><button>Configuração da WebUI</button></form></p>"
+#define configure_5 "<p><form action='lo' method='get'><button>Configuração do Logging</button></form></p>"
 #ifdef ZgatewayLORA
-#  define configure_6 "<p><form action='la' method='get'><button>Configure LORA</button></form></p>"
+#  define configure_6 "<p><form action='la' method='get'><button>Configuração LORA</button></form></p>"
 #elif defined(ZgatewayRTL_433) || defined(ZgatewayPilight) || defined(ZgatewayRF) || defined(ZgatewayRF2) || defined(ZactuatorSomfy)
 #  define configure_6 "<p><form action='rf' method='get'><button>Configure RF</button></form></p>"
 #else
@@ -67,7 +67,8 @@
 
 /*------------------- ----------------------*/
 
-const char header_html[] = "<!DOCTYPE html><html lang=\"en\" class= \" \"><head><meta charset='utf-8'><meta name= \"viewport \" content= \"width=device-width,initial-scale=1,user-scalable=no \"/><title>%s</title><script> var x = null, lt, to, tp, pc = ''; function eb(s) { return document.getElementById(s); } function qs(s) { return document.querySelector(s); } function sp(i) { eb(i).type = (eb(i).type === 'text' ? 'password' : 'text'); } function wl(f) { window.addEventListener('load', f); }";
+const char header_html[] = 
+"<!DOCTYPE html><html lang=\"en\" class= \" \"><head><meta charset='utf-8'><meta name= \"viewport \" content= \"width=device-width,initial-scale=1,user-scalable=no \"/><title>%s</title><script> var x = null, lt, to, tp, pc = ''; function eb(s) { return document.getElementById(s); } function qs(s) { return document.querySelector(s); } function sp(i) { eb(i).type = (eb(i).type === 'text' ? 'password' : 'text'); } function wl(f) { window.addEventListener('load', f); }";
 
 const char root_script[] = "var ft; function la(p) {a = p || '';clearTimeout(ft);clearTimeout(lt);if (x != null) { x.abort()}x = new XMLHttpRequest();x.onreadystatechange = function() { if (x.readyState == 4 && x.status == 200) {var s = x.responseText.replace(/{t}/g,\"<table style='width:100%'> \").replace(/{s}/g,\"<tr><th> \").replace(/{m}/g,\"</th><td style='width:20px;white-space:nowrap'> \").replace(/{e}/g,\"</td></tr> \");eb('l1').innerHTML = s;clearTimeout(ft);clearTimeout(lt);lt = setTimeout(la, 2345); }};x.open('GET', '.?m=1' + a, true);x.send();ft = setTimeout(la, 20000); } function lc(v, i, p) {if (eb('s')) { if (v == 'h' || v == 'd') {var sl = eb('sl4').value;eb('s').style.background = 'linear-gradient(to right,rgb(' + sl + '%,' + sl + '%,' + sl + '%),hsl(' + eb('sl2').value + ',100%%,50%%))'; }}la('&' + v + i + '=' + p); } wl(la);";
 
@@ -83,9 +84,9 @@ const char script[] = "function jd() { var t = 0, i = document.querySelectorAll(
 
 const char style[] = "<style> div, fieldset, input, select { padding: 5px; font-size: 1em; } fieldset { background: #2F2F2F; color: #DDDDDD;} legend {float: left; font-size: 1.3em;} legend span {position: absolute; top: 10px; left: 10px;} fieldset.set1 { background: #DDDDDD; color: #2E2F2F; position: relative; padding-top: 40px;} p { margin: 0.5em 0; } input { width: 100%; box-sizing: border-box; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; background: #EEEEEE; color: #2F2F2F; } input[type=checkbox], input[type=radio] { width: 1em; margin-right: 6px; vertical-align: -1px; } input[type=range] { width: 99%; } select { width: 100%; background: #EEEEEE; color: #2F2F2F; } textarea { resize: vertical; width: 98%; height: 318px; padding: 5px; overflow: auto; background: #2F2F2F; color: #FFA900; } body { text-align: center; font-family: verdana, sans-serif; background: #EEEEEE; color:#2E2F2F;} td { padding: 0px; } button { border: 0; border-radius: 0.3rem; background: #4B98D1; color: #faffff; line-height: 2.4rem; font-size: 1.2rem; width: 100%; -webkit-transition-duration: 0.4s; transition-duration: 0.4s; cursor: pointer; } button:hover { background: #025880;font-weight: bold; } .bred { background: #FFA900; } .bred:hover { background: #FF8000; font-weight: bold;} .bgrn { background: #7BB461; } .bgrn:hover { background: #3A772A;font-weight: bold; } a { color: #4B98D1; text-decoration: none; } .p { float: left; text-align: left; } .q { float: right; text-align: right; } .r { border-radius: 0.3em; padding: 2px; margin: 6px 2px; } </style></head>";
 
-const char root_body[] = body_header "<fieldset><div style='padding:0; height:7.5em; margin-left: 15%%; white-space: pre;' id='l1' name='l1'></div></fieldset><div id=but3d style='display: block;'></div><p><form id=but3 style='display: block;' action='cn' method='get'><button>Configuration</button></form></p><p><form id=but4 style='display: block;' action='in' method='get'><button>Information</button></form></p>" button_upgrade "<p><form id=but14 style='display: block;' action='cs' method='get'><button>Console</button></form></p><p><form id=but0 style='display: block;' action='.' method='get' onsubmit='return confirm(\"Confirm Restart\");'><button name='rst' class='button bred'>Restart</button></form></p>";
+const char root_body[] = body_header "<fieldset><div style='padding:0; height:7.5em; margin-left: 15%%; white-space: pre;' id='l1' name='l1'></div></fieldset><div id=but3d style='display: block;'></div><p><form id=but3 style='display: block;' action='cn' method='get'><button>Configuração</button></form></p><p><form id=but4 style='display: block;' action='in' method='get'><button>Informações</button></form></p>" button_upgrade "<p><form id=but14 style='display: block;' action='cs' method='get'><button>Console</button></form></p><p><form id=but0 style='display: block;' action='.' method='get' onsubmit='return confirm(\"Confirma o Restart\");'><button name='rst' class='button bred'>Reiniciar</button></form></p>";
 
-const char config_body[] = body_header "" configure_1 "" configure_2 "" configure_3 "" configure_4 "" configure_5 "" configure_6 "" configure_7 "" configure_8 "<div id=but1d style='display: block;'></div><p><form id=but1 style='display: block;' action='rt' method='get' onsubmit='return confirm(\"Confirm Reset Configuration\");'><button name='non' class='button bred'>Reset Configuration</button></form>" body_footer_main_menu;
+const char config_body[] = body_header "" configure_1 "" configure_2 "" configure_3 "" configure_4 "" configure_5 "" configure_6 "" configure_7 "" configure_8 "<div id=but1d style='display: block;'></div><p><form id=but1 style='display: block;' action='rt' method='get' onsubmit='return confirm(\"Confirma Reset das Configurações?\");'><button name='non' class='button bred'>Reset das Configurações</button></form>" body_footer_main_menu;
 
 const char reset_body[] = body_header "<div style='text-align:center;'>%s</div><br><div style='text-align:center;'>Device will restart in a few seconds</div><br>" body_footer_main_menu;
 
@@ -99,29 +100,29 @@ const char information_body[] = body_header "<style>td {padding: 0px 5px;}</styl
 
 const char upgrade_body[] = body_header "<div id='f1' style='display:block;'><fieldset class=\"set1\"><legend><span><b>Upgrade by Web Server</b></span></legend><form method='get' action='up'><br><b>OTA URL</b><br><input id='o' placeholder=\"OTA_URL\" value=\"%s\"><br><br><button type='submit' class='button bgrn'>Start upgrade</button></form></fieldset><br><br><fieldset class=\"set1\"><legend><span><b>Upgrade to Level</b></span></legend><form method='get' action='up'><p><b>Level</b><br><select id='le'><option value='1'>Latest Release</option><option value='2'>Development</option></select></p><br><button type='submit' class='button bgrn'>Start upgrade</button></form></fieldset></div><div id='f2' style='display:none;text-align:center;'><b>Upload started ...</b></div><div id=but2d style=\"display: block;\"></div><p>" body_footer_main_menu;
 
-const char config_wifi_body[] = body_header "%s<br><div><a href='/wi?scan='><b>Scan for all WiFi Networks</b></a></div><br><fieldset class=\"set1\"><legend><span><b>WiFi Parameters</b></span></legend><form method='get' action='wi'><p><b>WiFi Network</b> () <br><input id='s1' placeholder=\"Type or Select your WiFi Network\" value=\"%s\"></p><p><label><b>WiFi Password</b></label><br><input id='p1' type='password' placeholder=\"Enter your WiFi Password\" ></p><br><button name='save' type='submit' class='button bgrn'>Save</button></form></fieldset>" body_footer_config_menu;
+const char config_wifi_body[] = body_header "%s<br><div><a href='/wi?scan='><b>Procurar todas as redes WiFi</b></a></div><br><fieldset class=\"set1\"><legend><span><b>Parametros WIFI</b></span></legend><form method='get' action='wi'><p><b>Redes WiFi</b> () <br><input id='s1' placeholder=\"Escreva ou seleciona sua rede WiFi\" value=\"%s\"></p><p><label><b>Senha WiFi</b></label><br><input id='p1' type='password' placeholder=\"Entre com sua senha WiFi\" ></p><br><button name='save' type='submit' class='button bgrn'>Salvar</button></form></fieldset>" body_footer_config_menu;
 
 // mqtt server (mh), mqtt port (ml), mqtt username (mu), mqtt password (mp), secure connection (sc), server certificate (msc), topic (mt)
 
-const char config_mqtt_body[] = body_header "<fieldset class=\"set1\"><legend><span><b>MQTT Parameters</b></span></legend><form method='get' action='mq'><p><b>MQTT Server</b><br><input id='mh' placeholder=" MQTT_SERVER " value='%s'></p><p><b>MQTT Port</b><br><input id='ml' placeholder=" MQTT_PORT " value='%s'></p><p><b>MQTT Username</b><br><input id='mu' placeholder=" MQTT_USER " value='%s'></p><p><label><b>MQTT Password</b></label><br><input id='mp' type='password' placeholder=\"Password\" ></p><p><b>MQTT Secure Connection</b><br><input id='sc' type='checkbox' %s></p><p><b>Gateway Name</b><br><input id='h' placeholder=" Gateway_Name " value=\"%s\"></p><p><b>MQTT Base Topic</b><br><input id='mt' placeholder='' value='%s'></p><br><button name='save' type='submit' class='button bgrn'>Save</button></form></fieldset>" body_footer_config_menu;
+const char config_mqtt_body[] = body_header "<fieldset class=\"set1\"><legend><span><b>Parametros MQTT</b></span></legend><form method='get' action='mq'><p><b>Servidor MQTT</b><br><input id='mh' placeholder=" MQTT_SERVER " value='%s'></p><p><b>Porta MQTT</b><br><input id='ml' placeholder=" MQTT_PORT " value='%s'></p><p><b>Usuário MQTT</b><br><input id='mu' placeholder=" MQTT_USER " value='%s'></p><p><label><b>Senha MQTT</b></label><br><input id='mp' type='password' placeholder=\"Senha\" ></p><p><b>Conexão Segura MQTT</b><br><input id='sc' type='checkbox' %s></p><p><b>Nome do Gateway</b><br><input id='h' placeholder=" Gateway_Name " value=\"%s\"></p><p><b>T/ópico Base MQTT </b><br><input id='mt' placeholder='' value='%s'></p><br><button name='save' type='submit' class='button bgrn'>Salvar</button></form></fieldset>" body_footer_config_menu;
 
 #ifndef ESPWifiManualSetup
-const char config_gateway_body[] = body_header "<fieldset class=\"set1\"><legend><span><b>Gateway Configuration</b></span></legend><form method='get' action='cg'><p><b>Gateway Password (8 characters min)</b><br><input id='gp' type='password' placeholder=\"********\"  minlength='8'></p><br><button name='save' type='submit' class='button bgrn'>Save</button></form></fieldset>" body_footer_config_menu;
+const char config_gateway_body[] = body_header "<fieldset class=\"set1\"><legend><span><b>Configuração Gateway</b></span></legend><form method='get' action='cg'><p><b>Senha do Gateway(8 characteres mínimo)</b><br><input id='gp' type='password' placeholder=\"********\"  minlength='8'></p><br><button name='save' type='submit' class='button bgrn'>Salvar</button></form></fieldset>" body_footer_config_menu;
 #endif
-const char config_logging_body[] = body_header "<fieldset class=\"set1\"><legend><span><b>OpenMQTTGateway Logging</b></span></legend><form method='get' action='lo'><p><b>Log Level</b><br><select id='lo'><option %s value='0'>Silent</option><option %s value='1'>Fatal</option><option %s value='2'>Error</option><option %s value='3'>Warning</option><option %s value='4'>Notice</option><option %s value='5'>Trace</option><option %s value='6'>Verbose</option></select></p><br><button name='save' type='submit' class='button bgrn'>Save</button></form></fieldset>" body_footer_config_menu;
+const char config_logging_body[] = body_header "<fieldset class=\"set1\"><legend><span><b>Gateway Logging</b></span></legend><form method='get' action='lo'><p><b>Nível de Log</b><br><select id='lo'><option %s value='0'>Silent</option><option %s value='1'>Fatal</option><option %s value='2'>Error</option><option %s value='3'>Warning</option><option %s value='4'>Notice</option><option %s value='5'>Trace</option><option %s value='6'>Verbose</option></select></p><br><button name='save' type='submit' class='button bgrn'>Salvar</button></form></fieldset>" body_footer_config_menu;
 
-const char config_webui_body[] = body_header "<fieldset class=\"set1\"><legend><span><b>Configure WebUI</b></span></legend><form method='get' action='wu'><p><b>Display Metric</b><br><input id='dm' type='checkbox' %s></p><p><b>Secure WebUI</b><br><input id='sw' type='checkbox' %s></p><br><button name='save' type='submit' class='button bgrn'>Save</button></form></fieldset>" body_footer_config_menu;
+const char config_webui_body[] = body_header "<fieldset class=\"set1\"><legend><span><b>Configuração do WebUI</b></span></legend><form method='get' action='wu'><p><b>Display Metric</b><br><input id='dm' type='checkbox' %s></p><p><b>Secure WebUI</b><br><input id='sw' type='checkbox' %s></p><br><button name='save' type='submit' class='button bgrn'>Salvar</button></form></fieldset>" body_footer_config_menu;
 
 const char config_rf_body[] = body_header
     "<fieldset class=\"set1\">"
-    "<legend><span><b>Configure RF</b></span></legend>"
+    "<legend><span><b>Configuração RF</b></span></legend>"
     "<form method='get' action='rf'>"
 
-    "<p><b>Frequency</b><br>"
+    "<p><b>Frequencia</b><br>"
     "<input type='number' id='rf' name='rf' step='any' value='%.3f'></p>"
 
     // Active library dropdown
-    "<p><b>Active library</b><br>"
+    "<p><b>Biblioteca Activa</b><br>"
     "<select id='ar' name='ar'>%s</select></p>"
 
     /* // Need testing
@@ -131,23 +132,23 @@ const char config_rf_body[] = body_header
     "<p><b>RSSI Threshold</b><br>"
     "<input type='number' id='rs' name='rs' step='any' value='%d'></p>"
 */
-    "<br><button name='save' type='submit' class='button bgrn'>Save</button>"
+    "<br><button name='save' type='submit' class='button bgrn'>Salvar</button>"
     "</form>"
     "</fieldset>" body_footer_config_menu;
 
 const char config_lora_body[] = body_header
     "<fieldset class=\"set1\">"
-    "<legend><span><b>Configure LORA</b></span></legend>"
+    "<legend><span><b>Configuração LORA</b></span></legend>"
     "<form method='get' action='la'>"
 
-    "<p><b>Frequency</b><br>"
+    "<p><b>Frequência</b><br>"
     "<select id='lf' name='lf'>"
     "<option %s value='868000000'>868MHz</option>"
     "<option %s value='915000000'>915MHz</option>"
     "<option %s value='433000000'>433MHz</option>"
     "</select></p>"
 
-    "<p><b>TX Power</b><br>"
+    "<p><b>Potência (Power) TX</b><br>"
     "<select id='lt' name='lt'>"
     "<option %s value='0'>0 dBm</option>"
     "<option %s value='1'>1 dBm</option>"
@@ -201,19 +202,19 @@ const char config_lora_body[] = body_header
     "<p><b>Preamble Length</b><br>"
     "<input type='number' id='ll' name='ll' value='%d'></p>"
 
-    "<p><b>Sync Word</b><br>"
+    "<p><b>Palavra de Sincronia(Sync Word)</b><br>"
     "<input type='text' id='lw' name='lw' value='0x%02X'></p>"
 
     "<p><b>CRC</b><br>"
     "<input type='checkbox' id='lr' name='lr' %s></p>"
 
-    "<p><b>Invert IQ</b><br>"
+    "<p><b>Inverter IQ</b><br>"
     "<input type='checkbox' id='li' name='li' %s></p>"
 
     "<p><b>Only known</b><br>"
     "<input type='checkbox' id='ok' name='ok' %s></p>"
 
-    "<br><button name='save' type='submit' class='button bgrn'>Save</button>"
+    "<br><button name='save' type='submit' class='button bgrn'>Salvar</button>"
     "</form>"
     "</fieldset>" body_footer_config_menu;
 

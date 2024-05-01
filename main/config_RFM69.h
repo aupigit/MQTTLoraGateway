@@ -1,7 +1,7 @@
 /*
   OpenMQTTGateway  - ESP8266 or Arduino program for home automation
 
-   Act as a gateway between your 433mhz, infrared IR, BLE, LoRa signal and one interface like an MQTT broker
+   Act as a wifi or ethernet gateway between your 433mhz/infrared IR signal  and a MQTT broker
    Send and receiving command by MQTT
 
    This files enables to set your parameter for the radiofrequency gateways (ZgatewayRF and ZgatewayRF2) with RCswitch and newremoteswitch library
@@ -51,9 +51,9 @@ const char PROGMEM RFM69AP_NAME[] = "RFM69-AP";
 #define NODEID    10
 
 //Match frequency to the hardware version of the radio
-#define FREQUENCY RF69_433MHZ
+//#define FREQUENCY RF69_433MHZ
 //#define FREQUENCY     RF69_868MHZ
-//#define FREQUENCY      RF69_915MHZ
+#define FREQUENCY      RF69_915MHZ
 #define IS_RFM69HCW true // set to 'true' if you are using an RFM69HCW module
 #define POWER_LEVEL 31
 

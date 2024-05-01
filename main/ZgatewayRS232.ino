@@ -1,5 +1,5 @@
 /*  
-  Theengs OpenMQTTGateway - We Unite Sensors in One Open-Source Interface
+  OpenMQTTGateway  - ESP8266 or Arduino program for home automation 
 
    Act as a wifi or ethernet gateway between your RS232 device and a MQTT broker 
    Send and receiving command by MQTT

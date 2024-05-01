@@ -1,5 +1,5 @@
 /*
-  Theengs OpenMQTTGateway - We Unite Sensors in One Open-Source Interface
+  OpenMQTTGateway - ESP8266 or Arduino program for home automation
 
   This gateway enables to use RGBLED strips like WS2812
 

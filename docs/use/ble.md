@@ -12,7 +12,7 @@ Data are transmitted to an MQTT broker, where it can be used to trigger events a
 With the ability to monitor and analyze data such as temperature, humidity, moisture, luminance, weight, pressure, fine particles, and more, the BLE gateway provides a flexible and customizable solution for integrating BLE technology into your control and monitoring systems.
 
 <div style="text-align: center;">
-    <img src="/img/OpenMQTTGateway-sensors-ble.png" alt="BLE sensors and devices" style="max-width: 100%; height: auto;">
+    <img src="img/OpenMQTTGateway-sensors-ble.png" alt="BLE sensors and devices" width="640" height="130">
 </div>
 
 ## Products powered by OpenMQTTGateway
@@ -23,7 +23,7 @@ With the ability to monitor and analyze data such as temperature, humidity, mois
 
 <div style="text-align: center;">
     <a href="https://shop.theengs.io/products/theengs-bridge-esp32-ble-mqtt-gateway-with-ethernet-and-external-antenna" target="_blank" rel="noopener noreferrer">
-    <img src="/img/Theengs-Bridge-ble-gateway.png" alt="Theengs bridge view" style="max-width: 100%; height: auto;">
+    <img src="img/Theengs-Bridge-ble-gateway.png" alt="Theengs bridge view" width="375" height="501">
     </a>
 </div>
 
@@ -39,7 +39,7 @@ With the ability to monitor and analyze data such as temperature, humidity, mois
 
 <div style="text-align: center;">
     <a href="https://shop.theengs.io/products/theengs-plug-smart-plug-ble-gateway-and-energy-consumption" target="_blank" rel="noopener noreferrer">
-    <img src="/img/Theengs-Plug-OpenMQTTGateway.png" alt="Theengs plug view" style="max-width: 100%; height: auto;">
+    <img src="img/Theengs-Plug-OpenMQTTGateway.png" alt="Theengs plug view" width="268" height="453">
     </a>
 </div>
 
@@ -137,8 +137,6 @@ to enable white/black list back
 ::: tip
 So as to keep your white/black list persistent you can publish it with the retain option of MQTT (-r with mosquitto_pub or retain check box of MQTT Explorer)
 `mosquitto_pub -r -t home/OpenMQTTGateway/commands/MQTTtoBT/config -m '{"white-list":["01:23:14:55:16:15","4C:65:77:88:9C:79","4C:65:A6:66:3C:79"]}'`
-
-**NOTE**: Only when sending a white/black list should the retain option be set. All other commands to any OpenMQTTGateway gateway **must not** have the retain option set. To persist such other command settings, read [the following section](https://docs.openmqttgateway.com/use/ble.html#store-ble-configuration-into-the-gateway)
 :::
 
 ## Setting the time between BLE scans and force a scan (available with HA discovery)
@@ -223,10 +221,6 @@ If you have passive scanning activated, but also have some devices which require
 If you want to change the time between active scans you can change it by MQTT. For setting the active scan interval time to every 5 minutes:
 
 `mosquitto_pub -t home/OpenMQTTGateway/commands/MQTTtoBT/config -m '{"intervalacts":300000}'`
-
-::: warning Note
-The active scan interval `intervalacts` can only bet set equal to or higher than the passive scan interval `interval`, as any lower value would not make any sense.
-:::
 
 ## Setting the duration of a scan (available with HA discovery)
 
