@@ -55,14 +55,14 @@
 //
 #define USE_MAC_AS_GATEWAY_NAME
 #ifndef Gateway_Name
-#  define Gateway_Name "MQTTGateway"
+#  define Gateway_Name "gwdashfer"
 #endif
 #ifndef Gateway_Short_Name
-#  define Gateway_Short_Name "GW-dashfer"
+#  define Gateway_Short_Name "gwdashfer"
 #endif
 
 #ifndef Base_Topic
-#  define Base_Topic "gateway/"
+#  define Base_Topic "dashfer/"
 #endif
 
 /*-------------DEFINE YOUR NETWORK PARAMETERS BELOW----------------*/
@@ -84,7 +84,7 @@
 #endif
 
 #if defined(ESP8266) || defined(ESP32) // for nodemcu, weemos and esp8266
-#  define ESPWifiManualSetup true //uncomment you don't want to use wifimanager for your credential settings on ESP
+//#  define ESPWifiManualSetup true //uncomment you don't want to use wifimanager for your credential settings on ESP
 #else // for arduino boards
 const byte ip[] = {192, 168, 1, 99};
 const byte mac[] = {0xDE, 0xED, 0xBA, 0xFE, 0x54, 0x95}; //W5100 ethernet shield MAC address
@@ -137,7 +137,7 @@ const byte mac[] = {0xDE, 0xED, 0xBA, 0xFE, 0x54, 0x95}; //W5100 ethernet shield
 //#define WIFIMNG_HIDE_MQTT_CONFIG //Uncomment so as to hide MQTT setting from Wifi manager page
 
 /*-------------DEFINE YOUR ADVANCED NETWORK PARAMETERS BELOW----------------*/
-//#define MDNS_SD //uncomment if you  want to use mDNS for discovering automatically your IP server, please note that mDNS with ESP32 can cause the BLE to not work
+#define MDNS_SD //uncomment if you  want to use mDNS for discovering automatically your IP server, please note that mDNS with ESP32 can cause the BLE to not work
 #define maxConnectionRetryNetwork 3 //maximum Wifi connection attempts with existing credential at start (used to bypass ESP32 issue on wifi connect)
 #define maxRetryWatchDog          10 //maximum Wifi or MQTT re-connection attempts before restarting
 
@@ -713,7 +713,7 @@ Adafruit_NeoPixel leds2(ANEOPIX_IND_NUM_LEDS, ANEOPIX_IND_DATA_GPIO2, ANEOPIX_IN
 #define TimeToResetAtStart           5000 // Time we allow the user at start for the reset command by button press
 /*-------------------DEFINE LOG LEVEL----------------------*/
 #ifndef LOG_LEVEL
-#  define LOG_LEVEL LOG_LEVEL_NOTICE
+#  define LOG_LEVEL LOG_LEVEL_VERBOSE
 #endif
 
 /*-------------------ESP Wifi band and tx power ---------------------*/
